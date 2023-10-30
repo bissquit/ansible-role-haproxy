@@ -1,22 +1,42 @@
 ---
+
 - name: Converge
   hosts: all
   become: true
-
   vars:
     haproxy_socket: ''
     haproxy_chroot: ''
     haproxy_user: root
     haproxy_group: root
-
-    haproxy_backend_servers:
-      - name: app1
-        address: 127.0.0.1:8080
-
+    haproxy_services:
+      - haproxy_frontend_name: 'hafrontend'
+        haproxy_frontend_bind_address: '*'
+        haproxy_frontend_port: 80
+        haproxy_frontend_mode: 'http'
+        haproxy_backend_name: 'habackend'
+        haproxy_backend_mode: 'http'
+        haproxy_backend_balance_method: 'roundrobin'
+        haproxy_backend_httpchk: 'HEAD / HTTP/1.1\r\nHost:localhost'
+        haproxy_backend_servers:
+          - name: app1
+            address: 192.168.0.1:80
+          - name: app2
+            address: 192.168.0.2:80
+      - haproxy_frontend_name: 'etcd-front'
+        haproxy_frontend_bind_address: '*'
+        haproxy_frontend_port: 2379
+        haproxy_frontend_mode: 'tcp'
+        haproxy_backend_name: 'etcd-back'
+        haproxy_backend_mode: 'tcp'
+        haproxy_backend_balance_method: 'roundrobin'
+        haproxy_backend_servers:
+          - name: app1
+            address: 192.168.0.1:2379
+          - name: app2
+            address: 192.168.0.2:2379
   pre_tasks:
     - name: Update apt cache.
       apt: update_cache=yes cache_valid_time=600
       when: ansible_os_family == 'Debian'
-
   roles:
     - role: geerlingguy.haproxy
