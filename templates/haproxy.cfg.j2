@@ -48,7 +48,7 @@ backend {{ service.haproxy_backend_name }}
     mode {{ service.haproxy_backend_mode }}
     balance {{ service.haproxy_backend_balance_method }}
     option forwardfor
-{% if service.haproxy_backend_httpchk != '' %}
+{% if service.haproxy_backend_httpchk is defined and service.haproxy_backend_httpchk | length %}
     option httpchk {{ service.haproxy_backend_httpchk }}
 {% endif %}
     cookie SERVERID insert indirect
