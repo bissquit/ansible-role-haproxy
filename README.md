@@ -1,5 +1,9 @@
 # Ansible Role: HAProxy
 
+This fork provides option to configure multiple frontend/backend instances in the same HAProxy service.
+
+**Note:** pr to upstream has no sense because of **no author activities in respective issue** - [Allow for multiple frontends and backends](https://github.com/geerlingguy/ansible-role-haproxy/issues/49)
+
 [![CI](https://github.com/geerlingguy/ansible-role-haproxy/workflows/CI/badge.svg?event=push)](https://github.com/geerlingguy/ansible-role-haproxy/actions?query=workflow%3ACI)
 
 Installs HAProxy on RedHat/CentOS and Debian/Ubuntu Linux servers.
@@ -27,6 +31,22 @@ The jail directory where chroot() will be performed before dropping privileges. 
 
 The user and group under which HAProxy should run. Only change this if you know what you're doing!
 
+    haproxy_connect_timeout: 5000
+    haproxy_client_timeout: 50000
+    haproxy_server_timeout: 50000
+
+HAProxy default timeout configurations.
+
+    haproxy_global_vars:
+      - 'ssl-default-bind-ciphers ABCD+KLMJ:...'
+      - 'ssl-default-bind-options no-sslv3'
+
+A list of extra global variables to add to the global configuration section inside `haproxy.cfg`.
+
+### Multiple frontends and backends
+
+Use variable `haproxy_services` to provide a list of required options to configure multiple frontends and backends. Below you may read about default sub variables.
+
     haproxy_frontend_name: 'hafrontend'
     haproxy_frontend_bind_address: '*'
     haproxy_frontend_port: 80
@@ -48,18 +68,6 @@ HAProxy backend configuration directives.
         address: 192.168.0.2:80
 
 A list of backend servers (name and address) to which HAProxy will distribute requests.
-
-    haproxy_connect_timeout: 5000
-    haproxy_client_timeout: 50000
-    haproxy_server_timeout: 50000
-
-HAProxy default timeout configurations.
-
-    haproxy_global_vars:
-      - 'ssl-default-bind-ciphers ABCD+KLMJ:...'
-      - 'ssl-default-bind-options no-sslv3'
-
-A list of extra global variables to add to the global configuration section inside `haproxy.cfg`.
 
 ## Dependencies
 
