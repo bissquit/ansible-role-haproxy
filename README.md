@@ -75,10 +75,20 @@ None.
 
 ## Example Playbook
 
-    - hosts: balancer
-      sudo: yes
-      roles:
-        - { role: geerlingguy.haproxy }
+```yaml
+# requirements.yml
+- src: https://github.com/bissquit/ansible-role-haproxy.git
+  scm: git
+  version: 2.0.0 # check last release
+  name: bissquit.haproxy
+```
+
+```yaml
+- hosts: balancer
+  sudo: yes
+  roles:
+    - { role: bissquit.haproxy }
+```
 
 ## License
 
